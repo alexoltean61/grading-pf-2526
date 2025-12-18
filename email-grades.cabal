@@ -28,16 +28,19 @@ executable email-grades
     other-modules:    Model
                     , Parser
                     , Formula
+                    , Mailer
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:    base ^>=4.18.3.0
+                    , text
                     , mtl
                     , transformers
                     , containers
                     , bytestring
                     , vector
                     , cassava
+                    , mime-mail
                     , smtp-mail
     hs-source-dirs:   app
     default-language: Haskell2010
