@@ -17,7 +17,7 @@ import Mailer
 processAndSend :: String -> Laborator -> ExceptT String IO ()
 processAndSend filename nrLab = do
     v <- processCsv filename
-    V.forM_ v (\ v -> liftIO (print $ (nume . fst) v) >> sendToStudent nrLab v)
+    V.forM_ v (\ v -> liftIO (print $ (nume . fst) v) >> sendToStudent 3 nrLab v)
 
 main :: IO ()
 main = do

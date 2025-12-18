@@ -20,8 +20,8 @@ import Model
 import Formula
 import Data.ByteString (ByteString)
 
-sendToStudent :: Laborator -> StudentPair -> ExceptT String IO ()
-sendToStudent nrLab sp@(student, d) = do
+sendToStudent :: Integer -> Laborator -> StudentPair -> ExceptT String IO ()
+sendToStudent retries nrLab sp@(student, d) = do
     let to = genAddress student
     let subject = "Punctajul tău parțial la labul de PF"
     let plainBody = genPlainContent d
@@ -35,7 +35,10 @@ sendToStudent nrLab sp@(student, d) = do
     mail <- liftIO $ simpleMail to self subject plainBody htmlBody []
     conn <- liftIO $ connectSMTPS' host 465
     (code, bs) <- liftIO $ login conn username password
-    when (code /= 235) $ throwError (show bs)
+    when (code /= 235) $ do
+        when (retries > 0) $
+            liftIO (print "failed, retrying...") >> sendToStudent (retries-1) nrLab sp
+        throwError (show bs)
     liftIO $ renderAndSend conn mail
     liftIO $ print mail
     liftIO $ closeSMTP conn
